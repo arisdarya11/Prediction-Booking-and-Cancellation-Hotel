@@ -53,10 +53,14 @@ if st.button("Prediksi"):
     }])
 
     # =========================
-    # PENTING: samakan kolom & urutan dengan encoder saat training
+    # Samakan kolom dengan encoder (anti KeyError)
     # =========================
     if hasattr(encoder, "feature_names_in_"):
-        input_data = input_data[encoder.feature_names_in_]
+        for col in encoder.feature_names_in_:
+            if col not in input_data.columns:
+                input_data[col] = "Unknown"
+
+        input_data = input_data[list(encoder.feature_names_in_)]
 
     # =========================
     # Encoding
@@ -78,6 +82,6 @@ if st.button("Prediksi"):
     # Output
     # =========================
     if prediction[0] == 1:
-        st.error(f"⚠️ Booking Berpotensi Cancel ({prob*100:.2f}%)")
+        st.error(f"⚠️ Booking Berpotensi Cancel ({prob * 100:.2f}%)")
     else:
-        st.success(f"✅ Booking Aman ({(1-prob)*100:.2f}%)")
+        st.success(f"✅ Booking Aman ({(1 - prob) * 100:.2f}%)")
