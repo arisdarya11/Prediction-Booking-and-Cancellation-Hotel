@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # Load model & preprocessing
-model = joblib.load("model_rf.pkl")
+model = joblib.load("model_rf_reduced.pkl")
 encoder = joblib.load("encoder.pkl")
 scaler = joblib.load("scaler.pkl")
 
