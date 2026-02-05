@@ -4,14 +4,19 @@ import numpy as np
 import joblib
 
 # =========================
-# LOAD FILE
+# LOAD MODEL & FILE
 # =========================
 model = joblib.load("model_rf_reduced.pkl")
 scaler = joblib.load("scaler.pkl")
 model_features = joblib.load("model_features.pkl")
 
-st.set_page_config(page_title="Hotel Booking Cancellation", layout="centered")
+st.set_page_config(
+    page_title="Hotel Booking Cancellation Prediction",
+    layout="centered"
+)
+
 st.title("🏨 Hotel Booking Cancellation Prediction")
+st.write("Masukkan data reservasi untuk memprediksi kemungkinan pembatalan booking.")
 
 # =========================
 # USER INPUT
@@ -33,51 +38,53 @@ customer_type = st.selectbox(
 )
 
 # =========================
-# BUILD FEATURE MATRIX (FOLLOW model_features)
+# BUILD FEATURE MATRIX
 # =========================
+# Ground truth: model_features.pkl
 X = pd.DataFrame(
     np.zeros((1, len(model_features))),
     columns=model_features
 )
 
 # ---- numeric
-numeric_values = {
+numeric_inputs = {
     "lead_time": lead_time,
     "adr": adr,
     "total_nights": total_nights,
     "adults": adults
 }
 
-for col, val in numeric_values.items():
+for col, val in numeric_inputs.items():
     if col in X.columns:
         X[col] = val
 
 # ---- manual one-hot categorical
-categorical_map = {
+categorical_inputs = {
     "hotel": hotel,
     "meal": meal,
     "market_segment": market_segment,
     "customer_type": customer_type
 }
 
-for feature, value in categorical_map.items():
-    col_name = f"{feature}_{value}"
-    if col_name in X.columns:
-        X[col_name] = 1
+for feature, value in categorical_inputs.items():
+    onehot_col = f"{feature}_{value}"
+    if onehot_col in X.columns:
+        X[onehot_col] = 1
 
 # =========================
-# SCALING
+# SCALING (CRITICAL FIX)
 # =========================
-X_scaled = scaler.transform(X)
+# scaler dilatih dengan NumPy → inference juga NumPy
+X_scaled = scaler.transform(X.values)
 
 # =========================
 # PREDICTION
 # =========================
-if st.button("Predict"):
+if st.button("🔮 Predict"):
     prediction = model.predict(X_scaled)[0]
-    prob = model.predict_proba(X_scaled)[0][1]
+    probability = model.predict_proba(X_scaled)[0][1]
 
     if prediction == 1:
-        st.error(f"❌ Booking berpotensi **DIBATALKAN** ({prob:.2%})")
+        st.error(f"❌ Booking berpotensi **DIBATALKAN** ({probability:.2%})")
     else:
-        st.success(f"✅ Booking **AMAN** ({1 - prob:.2%})")
+        st.success(f"✅ Booking **AMAN** ({1 - probability:.2%})")
