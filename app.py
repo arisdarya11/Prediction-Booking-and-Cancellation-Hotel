@@ -39,7 +39,7 @@ customer_type = st.selectbox(
 )
 
 # =========================
-# RAW INPUT DF
+# RAW INPUT
 # =========================
 raw_df = pd.DataFrame([{
     "lead_time": lead_time,
@@ -55,26 +55,34 @@ raw_df = pd.DataFrame([{
 # =========================
 # PREPROCESSING
 # =========================
-# Numeric
-num_cols = ["lead_time", "adr", "total_nights", "adults"]
-X_num = scaler.transform(raw_df[num_cols])
+# ---- NUMERIC (SAFE MODE)
+num_safe = pd.DataFrame(
+    np.zeros((1, len(scaler.feature_names_in_))),
+    columns=scaler.feature_names_in_
+)
 
-# Categorical — SAFE MODE
-X_cat_safe = pd.DataFrame(
+for col in raw_df.columns:
+    if col in num_safe.columns:
+        num_safe[col] = raw_df[col].values
+
+X_num = scaler.transform(num_safe)
+
+# ---- CATEGORICAL (SAFE MODE)
+cat_safe = pd.DataFrame(
     np.zeros((1, len(encoder.feature_names_in_))),
     columns=encoder.feature_names_in_
 )
 
 for col in raw_df.columns:
-    if col in X_cat_safe.columns:
-        X_cat_safe[col] = raw_df[col].values
+    if col in cat_safe.columns:
+        cat_safe[col] = raw_df[col].values
 
-X_cat_enc = encoder.transform(X_cat_safe)
+X_cat = encoder.transform(cat_safe)
 
 # =========================
 # FINAL FEATURE MATRIX
 # =========================
-X_final = np.hstack([X_num, X_cat_enc])
+X_final = np.hstack([X_num, X_cat])
 X_final = pd.DataFrame(X_final, columns=model_features)
 
 # =========================
