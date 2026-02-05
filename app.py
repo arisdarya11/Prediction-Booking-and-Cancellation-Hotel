@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# =========================
-# LOAD MODEL & FILE
-# =========================
+# ======================
+# LOAD MODEL & TOOLS
+# ======================
 model = joblib.load("model_rf_reduced.pkl")
 scaler = joblib.load("scaler.pkl")
-model_features = joblib.load("model_features.pkl")
+encoder = joblib.load("encoder.pkl")
 
 st.set_page_config(
     page_title="Hotel Booking Cancellation Prediction",
@@ -16,13 +16,12 @@ st.set_page_config(
 )
 
 st.title("🏨 Hotel Booking Cancellation Prediction")
-st.write("Masukkan data reservasi untuk memprediksi kemungkinan pembatalan booking.")
 
-# =========================
+# ======================
 # USER INPUT
-# =========================
+# ======================
 lead_time = st.number_input("Lead Time (hari)", 0, 500, 50)
-adr = st.number_input("ADR (harga per malam)", 0.0, 500.0, 100.0)
+adr = st.number_input("ADR", 0.0, 500.0, 100.0)
 total_nights = st.number_input("Total Nights", 1, 30, 3)
 adults = st.number_input("Adults", 1, 5, 2)
 
@@ -37,54 +36,39 @@ customer_type = st.selectbox(
     ["Transient", "Transient-Party", "Contract", "Group"]
 )
 
-# =========================
-# BUILD FEATURE MATRIX
-# =========================
-# Ground truth: model_features.pkl
-X = pd.DataFrame(
-    np.zeros((1, len(model_features))),
-    columns=model_features
-)
+# ======================
+# RAW INPUT (WAJIB SESUAI TRAINING)
+# ======================
+raw_df = pd.DataFrame({
+    "lead_time": [lead_time],
+    "adr": [adr],
+    "total_nights": [total_nights],
+    "adults": [adults],
+    "hotel": [hotel],
+    "meal": [meal],
+    "market_segment": [market_segment],
+    "customer_type": [customer_type],
+})
 
-# ---- numeric
-numeric_inputs = {
-    "lead_time": lead_time,
-    "adr": adr,
-    "total_nights": total_nights,
-    "adults": adults
-}
+# ======================
+# PREPROCESSING
+# ======================
+num_cols = scaler.feature_names_in_
+cat_cols = encoder.feature_names_in_
 
-for col, val in numeric_inputs.items():
-    if col in X.columns:
-        X[col] = val
+X_num = scaler.transform(raw_df[num_cols])
+X_cat = encoder.transform(raw_df[cat_cols])
 
-# ---- manual one-hot categorical
-categorical_inputs = {
-    "hotel": hotel,
-    "meal": meal,
-    "market_segment": market_segment,
-    "customer_type": customer_type
-}
+X_final = np.hstack([X_num, X_cat])
 
-for feature, value in categorical_inputs.items():
-    onehot_col = f"{feature}_{value}"
-    if onehot_col in X.columns:
-        X[onehot_col] = 1
-
-# =========================
-# SCALING (CRITICAL FIX)
-# =========================
-# scaler dilatih dengan NumPy → inference juga NumPy
-X_scaled = scaler.transform(X.values)
-
-# =========================
+# ======================
 # PREDICTION
-# =========================
+# ======================
 if st.button("🔮 Predict"):
-    prediction = model.predict(X_scaled)[0]
-    probability = model.predict_proba(X_scaled)[0][1]
+    pred = model.predict(X_final)[0]
+    prob = model.predict_proba(X_final)[0][1]
 
-    if prediction == 1:
-        st.error(f"❌ Booking berpotensi **DIBATALKAN** ({probability:.2%})")
+    if pred == 1:
+        st.error(f"❌ Booking kemungkinan **DIBATALKAN** ({prob:.2%})")
     else:
-        st.success(f"✅ Booking **AMAN** ({1 - probability:.2%})")
+        st.success(f"✅ Booking **TIDAK DIBATALKAN** ({1 - prob:.2%})")
