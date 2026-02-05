@@ -17,7 +17,7 @@ cat_cols = list(encoder.feature_names_in_)
 # STREAMLIT UI
 # ======================
 st.title("Prediksi Pembatalan Booking Hotel")
-st.write("Masukkan data reservasi (input terbatas, model tetap lengkap)")
+st.write("Input terbatas, model tetap pakai feature training lengkap")
 
 lead_time = st.number_input("Lead Time (hari)", 0, 500, 50)
 adr = st.number_input("ADR (harga per malam)", 0.0, 1000.0, 100.0)
@@ -54,26 +54,27 @@ if st.button("Prediksi"):
         "deposit_type": deposit_type,
     }
 
-    raw_df = pd.DataFrame([user_input])
-
     # ------------------
     # NUMERIC FEATURES
     # ------------------
     X_num = pd.DataFrame(0, index=[0], columns=num_cols)
 
-    for col in raw_df.columns:
+    for col, val in user_input.items():
         if col in num_cols:
-            X_num[col] = raw_df[col]
+            X_num.at[0, col] = val
 
     X_num_scaled = scaler.transform(X_num)
 
     # ------------------
-    # CATEGORICAL FEATURES
+    # CATEGORICAL FEATURES (FIXED)
     # ------------------
-    X_cat = pd.DataFrame({
-        col: raw_df[col] if col in raw_df.columns else encoder.categories_[i][0]
-        for i, col in enumerate(cat_cols)
-    })
+    X_cat = pd.DataFrame(index=[0], columns=cat_cols)
+
+    for i, col in enumerate(cat_cols):
+        if col in user_input:
+            X_cat.at[0, col] = user_input[col]
+        else:
+            X_cat.at[0, col] = encoder.categories_[i][0]
 
     X_cat_encoded = encoder.transform(X_cat)
 
@@ -88,9 +89,6 @@ if st.button("Prediksi"):
     prediction = model.predict(X_final)[0]
     probability = model.predict_proba(X_final)[0][1]
 
-    # ------------------
-    # OUTPUT
-    # ------------------
     if prediction == 1:
         st.error(f"⚠️ Booking Berpotensi Cancel ({probability*100:.2f}%)")
     else:
