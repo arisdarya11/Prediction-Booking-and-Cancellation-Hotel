@@ -1,21 +1,19 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
 
 # =========================
-# LOAD FILE
+# LOAD MODEL ONLY
 # =========================
 model = joblib.load("model_rf_reduced.pkl")
-encoder = joblib.load("encoder.pkl")
-scaler = joblib.load("scaler.pkl")
-model_features = joblib.load("model_features.pkl")
 
 st.set_page_config(page_title="Hotel Booking Cancellation", layout="centered")
 st.title("🏨 Hotel Booking Cancellation Prediction")
 
+st.write("⚠️ Versi sederhana tanpa preprocessing eksternal")
+
 # =========================
-# INPUT
+# USER INPUT
 # =========================
 lead_time = st.number_input("Lead Time (hari)", 0, 500, 50)
 adr = st.number_input("ADR", 0.0, 500.0, 100.0)
@@ -34,9 +32,9 @@ customer_type = st.selectbox(
 )
 
 # =========================
-# RAW INPUT
+# RAW DATAFRAME (NO ENCODING, NO SCALING)
 # =========================
-raw_df = pd.DataFrame([{
+input_df = pd.DataFrame([{
     "lead_time": lead_time,
     "adr": adr,
     "total_nights": total_nights,
@@ -47,40 +45,22 @@ raw_df = pd.DataFrame([{
     "customer_type": customer_type
 }])
 
-# =========================
-# BUILD FEATURE MATRIX (FOLLOW MODEL_FEATURES)
-# =========================
-X = pd.DataFrame(
-    np.zeros((1, len(model_features))),
-    columns=model_features
-)
-
-# numeric
-for col in ["lead_time", "adr", "total_nights", "adults"]:
-    if col in X.columns:
-        X[col] = raw_df[col].values
-
-# categorical
-cat_cols = raw_df.select_dtypes(include="object")
-cat_encoded = encoder.transform(cat_cols)
-cat_feature_names = encoder.get_feature_names_out(cat_cols.columns)
-cat_df = pd.DataFrame(cat_encoded, columns=cat_feature_names)
-
-for col in cat_df.columns:
-    if col in X.columns:
-        X[col] = cat_df[col].values
-
-# scaling (NO feature_names_in_)
-X_scaled = scaler.transform(X)
+st.write("📥 Input ke model:")
+st.dataframe(input_df)
 
 # =========================
 # PREDICTION
 # =========================
 if st.button("Predict"):
-    pred = model.predict(X_scaled)[0]
-    prob = model.predict_proba(X_scaled)[0][1]
+    try:
+        prediction = model.predict(input_df)[0]
+        prob = model.predict_proba(input_df)[0][1]
 
-    if pred == 1:
-        st.error(f"❌ Booking berpotensi DIBATALKAN ({prob:.2%})")
-    else:
-        st.success(f"✅ Booking AMAN ({1 - prob:.2%})")
+        if prediction == 1:
+            st.error(f"❌ Booking berpotensi DIBATALKAN ({prob:.2%})")
+        else:
+            st.success(f"✅ Booking AMAN ({1 - prob:.2%})")
+
+    except Exception as e:
+        st.error("❌ Model tidak kompatibel dengan input mentah.")
+        st.code(str(e))
