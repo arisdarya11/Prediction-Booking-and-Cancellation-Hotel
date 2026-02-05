@@ -2,22 +2,15 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# =========================
 # Load model & preprocessing
-# =========================
 model = joblib.load("model_rf_reduced.pkl")
 encoder = joblib.load("encoder.pkl")
-scaler = joblib.load("scaler.pkl")
 
-# =========================
 # Judul App
-# =========================
 st.title("Prediksi Pembatalan Booking Hotel")
 st.write("Masukkan data reservasi untuk memprediksi kemungkinan cancel")
 
-# =========================
 # Input User
-# =========================
 lead_time = st.number_input("Lead Time (hari)", 0, 500, 50)
 adr = st.number_input("ADR (Harga per malam)", 0.0, 500.0, 100.0)
 adults = st.number_input("Jumlah Dewasa", 1, 5, 2)
@@ -34,14 +27,8 @@ market_segment = st.selectbox(
     ["Online TA", "Offline TA/TO", "Direct", "Corporate"]
 )
 
-# =========================
-# Button Predict
-# =========================
 if st.button("Prediksi"):
 
-    # =========================
-    # Buat DataFrame input
-    # =========================
     input_data = pd.DataFrame([{
         "lead_time": lead_time,
         "adr": adr,
@@ -52,35 +39,20 @@ if st.button("Prediksi"):
         "market_segment": market_segment
     }])
 
-    # =========================
-    # Samakan kolom dengan encoder (anti KeyError)
-    # =========================
+    # Samakan kolom encoder
     if hasattr(encoder, "feature_names_in_"):
         for col in encoder.feature_names_in_:
             if col not in input_data.columns:
                 input_data[col] = "Unknown"
-
         input_data = input_data[list(encoder.feature_names_in_)]
 
-    # =========================
     # Encoding
-    # =========================
     encoded = encoder.transform(input_data)
 
-    # =========================
-    # Scaling
-    # =========================
-    scaled = scaler.transform(encoded)
+    # Predict (TANPA SCALER)
+    prediction = model.predict(encoded)
+    prob = model.predict_proba(encoded)[0][1]
 
-    # =========================
-    # Predict
-    # =========================
-    prediction = model.predict(scaled)
-    prob = model.predict_proba(scaled)[0][1]
-
-    # =========================
-    # Output
-    # =========================
     if prediction[0] == 1:
         st.error(f"⚠️ Booking Berpotensi Cancel ({prob * 100:.2f}%)")
     else:
