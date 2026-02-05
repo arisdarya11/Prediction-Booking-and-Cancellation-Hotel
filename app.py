@@ -4,7 +4,7 @@ import numpy as np
 import joblib
 
 # ======================
-# LOAD MODEL & OBJECT
+# LOAD MODEL & PREPROCESSOR
 # ======================
 model = joblib.load("model_rf_reduced.pkl")
 scaler = joblib.load("scaler.pkl")
@@ -17,7 +17,7 @@ cat_cols = list(encoder.feature_names_in_)
 # STREAMLIT UI
 # ======================
 st.title("Prediksi Pembatalan Booking Hotel")
-st.write("Input terbatas, model tetap pakai feature training lengkap")
+st.write("Streamlit menyesuaikan model (feature training tetap lengkap)")
 
 lead_time = st.number_input("Lead Time (hari)", 0, 500, 50)
 adr = st.number_input("ADR (harga per malam)", 0.0, 1000.0, 100.0)
@@ -36,12 +36,12 @@ deposit_type = st.selectbox(
 )
 
 # ======================
-# PREDICT
+# PREDICTION
 # ======================
 if st.button("Prediksi"):
 
     # ------------------
-    # RAW INPUT USER
+    # USER INPUT (DICT)
     # ------------------
     user_input = {
         "lead_time": lead_time,
@@ -64,9 +64,10 @@ if st.button("Prediksi"):
             X_num.at[0, col] = val
 
     X_num_scaled = scaler.transform(X_num)
+    X_num_scaled = np.asarray(X_num_scaled)
 
     # ------------------
-    # CATEGORICAL FEATURES (FIXED)
+    # CATEGORICAL FEATURES
     # ------------------
     X_cat = pd.DataFrame(index=[0], columns=cat_cols)
 
@@ -74,17 +75,27 @@ if st.button("Prediksi"):
         if col in user_input:
             X_cat.at[0, col] = user_input[col]
         else:
+            # default kategori pertama saat training
             X_cat.at[0, col] = encoder.categories_[i][0]
 
     X_cat_encoded = encoder.transform(X_cat)
 
+    # kalau encoder output sparse
+    if hasattr(X_cat_encoded, "toarray"):
+        X_cat_encoded = X_cat_encoded.toarray()
+
+    X_cat_encoded = np.asarray(X_cat_encoded)
+
     # ------------------
     # FINAL INPUT
     # ------------------
-    X_final = np.hstack([X_num_scaled, X_cat_encoded])
+    X_final = np.concatenate(
+        [X_num_scaled, X_cat_encoded],
+        axis=1
+    )
 
     # ------------------
-    # PREDICTION
+    # PREDICT
     # ------------------
     prediction = model.predict(X_final)[0]
     probability = model.predict_proba(X_final)[0][1]
@@ -92,4 +103,4 @@ if st.button("Prediksi"):
     if prediction == 1:
         st.error(f"⚠️ Booking Berpotensi Cancel ({probability*100:.2f}%)")
     else:
-        st.success(f"✅ Booking Aman ({(1-probability)*100:.2f}%)")
+        st.success(f"✅ Booking Aman ({(1 - probability)*100:.2f}%)")
