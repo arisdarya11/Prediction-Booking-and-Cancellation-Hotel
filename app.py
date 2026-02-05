@@ -1,32 +1,34 @@
 import streamlit as st
 import pandas as pd
-import joblib
 import numpy as np
+import joblib
 
 # =========================
-# LOAD MODEL ARTIFACTS
+# LOAD ARTIFACTS
 # =========================
 model = joblib.load("model_rf_reduced.pkl")
 encoder = joblib.load("encoder.pkl")
 scaler = joblib.load("scaler.pkl")
 model_features = joblib.load("model_features.pkl")
 
-st.set_page_config(page_title="Hotel Booking Cancellation Prediction")
+st.set_page_config(
+    page_title="Hotel Booking Cancellation Prediction",
+    layout="centered"
+)
 
 st.title("🏨 Hotel Booking Cancellation Prediction")
+st.write("Masukkan data reservasi untuk memprediksi kemungkinan pembatalan booking.")
 
 # =========================
-# INPUT USER
+# USER INPUT
 # =========================
-st.subheader("Booking Information")
-
-lead_time = st.number_input("Lead Time (days)", min_value=0, value=50)
-adr = st.number_input("Average Daily Rate (ADR)", min_value=0.0, value=100.0)
+lead_time = st.number_input("Lead Time (hari)", min_value=0, value=50)
+adr = st.number_input("ADR (harga per malam)", min_value=0.0, value=100.0)
 total_nights = st.number_input("Total Nights", min_value=1, value=3)
-adults = st.number_input("Adults", min_value=1, value=2)
+adults = st.number_input("Jumlah Dewasa", min_value=1, value=2)
 
 hotel = st.selectbox("Hotel Type", ["City Hotel", "Resort Hotel"])
-meal = st.selectbox("Meal Type", ["BB", "HB", "FB", "SC"])
+meal = st.selectbox("Meal Plan", ["BB", "HB", "FB", "SC"])
 market_segment = st.selectbox(
     "Market Segment",
     ["Online TA", "Offline TA/TO", "Direct", "Corporate", "Groups"]
@@ -37,9 +39,9 @@ customer_type = st.selectbox(
 )
 
 # =========================
-# BUILD INPUT DATAFRAME
+# RAW INPUT DF
 # =========================
-input_dict = {
+raw_df = pd.DataFrame([{
     "lead_time": lead_time,
     "adr": adr,
     "total_nights": total_nights,
@@ -47,44 +49,42 @@ input_dict = {
     "hotel": hotel,
     "meal": meal,
     "market_segment": market_segment,
-    "customer_type": customer_type,
-}
-
-input_df = pd.DataFrame([input_dict])
+    "customer_type": customer_type
+}])
 
 # =========================
-# FEATURE ENGINEERING
+# PREPROCESSING
 # =========================
+# Numeric
 num_cols = ["lead_time", "adr", "total_nights", "adults"]
-cat_cols = ["hotel", "meal", "market_segment", "customer_type"]
+X_num = scaler.transform(raw_df[num_cols])
 
-X_num = input_df[num_cols]
-X_cat = input_df[cat_cols]
+# Categorical — SAFE MODE
+X_cat_safe = pd.DataFrame(
+    np.zeros((1, len(encoder.feature_names_in_))),
+    columns=encoder.feature_names_in_
+)
 
-# ⚠️ PENTING: pastikan kolom sama persis
-X_cat = X_cat[encoder.feature_names_in_]
+for col in raw_df.columns:
+    if col in X_cat_safe.columns:
+        X_cat_safe[col] = raw_df[col].values
 
-# Encode & Scale
-X_cat_enc = encoder.transform(X_cat)
-X_num_scaled = scaler.transform(X_num)
-
-# Gabungkan
-X_final = np.hstack([X_num_scaled, X_cat_enc])
+X_cat_enc = encoder.transform(X_cat_safe)
 
 # =========================
-# SAMAKAN URUTAN FEATURE MODEL
+# FINAL FEATURE MATRIX
 # =========================
-X_final_df = pd.DataFrame(X_final, columns=model_features)
-X_final_df = X_final_df[model_features]
+X_final = np.hstack([X_num, X_cat_enc])
+X_final = pd.DataFrame(X_final, columns=model_features)
 
 # =========================
 # PREDICTION
 # =========================
-if st.button("Predict Cancellation"):
-    prediction = model.predict(X_final_df)[0]
-    probability = model.predict_proba(X_final_df)[0][1]
+if st.button("🔮 Predict"):
+    prediction = model.predict(X_final)[0]
+    probability = model.predict_proba(X_final)[0][1]
 
     if prediction == 1:
-        st.error(f"❌ Booking kemungkinan DIBATALKAN ({probability:.2%})")
+        st.error(f"❌ Booking berpotensi **DIBATALKAN** ({probability:.2%})")
     else:
-        st.success(f"✅ Booking kemungkinan TIDAK dibatalkan ({1 - probability:.2%})")
+        st.success(f"✅ Booking **AMAN** ({1 - probability:.2%})")
