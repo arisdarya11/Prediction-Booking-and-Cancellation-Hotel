@@ -18,20 +18,22 @@ cat_cols = list(encoder.feature_names_in_)
 # ======================
 st.title("Prediksi Pembatalan Booking Hotel")
 
-lead_time = st.number_input("Lead Time", 0, 500, 50)
+lead_time = st.number_input("Lead Time (hari)", 0, 500, 50)
 adr = st.number_input("ADR", 0.0, 1000.0, 100.0)
-adults = st.number_input("Adults", 1, 5, 2)
-children = st.number_input("Children", 0, 5, 0)
-babies = st.number_input("Babies", 0, 3, 0)
 
-hotel = st.selectbox("Hotel", ["City Hotel", "Resort Hotel"])
-market_segment = st.selectbox(
-    "Market Segment",
-    ["Online TA", "Offline TA/TO", "Direct", "Corporate"]
+country = st.selectbox(
+    "Country",
+    ["PRT", "GBR", "ESP", "FRA", "DEU", "OTHERS"]
 )
+
 deposit_type = st.selectbox(
     "Deposit Type",
     ["No Deposit", "Non Refund", "Refundable"]
+)
+
+total_of_special_requests = st.slider(
+    "Total Special Requests",
+    0, 5, 1
 )
 
 # ======================
@@ -42,16 +44,13 @@ if st.button("Prediksi"):
     user_input = {
         "lead_time": lead_time,
         "adr": adr,
-        "adults": adults,
-        "children": children,
-        "babies": babies,
-        "hotel": hotel,
-        "market_segment": market_segment,
+        "country": country,
         "deposit_type": deposit_type,
+        "total_of_special_requests": total_of_special_requests,
     }
 
     # ------------------
-    # NUMERIC
+    # NUMERIC FEATURES
     # ------------------
     X_num = pd.DataFrame(0, index=[0], columns=num_cols)
     for k, v in user_input.items():
@@ -62,13 +61,14 @@ if st.button("Prediksi"):
     X_num_scaled = np.asarray(X_num_scaled)
 
     # ------------------
-    # CATEGORICAL
+    # CATEGORICAL FEATURES
     # ------------------
     X_cat = pd.DataFrame(index=[0], columns=cat_cols)
     for i, col in enumerate(cat_cols):
         if col in user_input:
             X_cat.at[0, col] = user_input[col]
         else:
+            # default ke kategori pertama saat training
             X_cat.at[0, col] = encoder.categories_[i][0]
 
     X_cat_encoded = encoder.transform(X_cat)
@@ -82,7 +82,7 @@ if st.button("Prediksi"):
     # ------------------
     X_final = np.concatenate([X_num_scaled, X_cat_encoded], axis=1)
 
-    # 🔐 PAKSA SESUAI MODEL
+    # 🔐 PAKSA SESUAI JUMLAH FITUR MODEL
     expected = model.n_features_in_
     current = X_final.shape[1]
 
