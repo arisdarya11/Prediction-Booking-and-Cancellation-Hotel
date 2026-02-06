@@ -26,6 +26,11 @@ country = st.selectbox(
     ["PRT", "GBR", "ESP", "FRA", "DEU", "OTHERS"]
 )
 
+market_segment = st.selectbox(
+    "Market Segment",
+    ["Online TA", "Offline TA/TO", "Direct", "Corporate"]
+)
+
 deposit_type = st.selectbox(
     "Deposit Type",
     ["No Deposit", "Non Refund", "Refundable"]
@@ -45,6 +50,7 @@ if st.button("Prediksi"):
         "lead_time": lead_time,
         "adr": adr,
         "country": country,
+        "market_segment": market_segment,
         "deposit_type": deposit_type,
         "total_of_special_requests": total_of_special_requests,
     }
@@ -68,7 +74,7 @@ if st.button("Prediksi"):
         if col in user_input:
             X_cat.at[0, col] = user_input[col]
         else:
-            # default ke kategori pertama saat training
+            # default kategori pertama saat training
             X_cat.at[0, col] = encoder.categories_[i][0]
 
     X_cat_encoded = encoder.transform(X_cat)
