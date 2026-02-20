@@ -377,7 +377,7 @@ div[data-testid="stButton"] > button:active { transform: translateY(0) !importan
 # ══════════════════════════════════════════════════════════════════
 @st.cache_resource
 def load_artifacts():
-    model    = joblib.load("model_rf_reduced.pkl")
+    model    = joblib.load("xgboost_model.pkl")
     scaler   = joblib.load("scaler.pkl")
     encoder  = joblib.load("encoder.pkl")
     try:
