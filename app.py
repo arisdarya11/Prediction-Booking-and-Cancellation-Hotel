@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # ══════════════════════════════════════════════════════════════════
-# CUSTOM CSS — Dark Luxury Hotel Theme
+# CUSTOM CSS — Clean Light Theme (Warm White + Teal + Navy)
 # ══════════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
@@ -23,24 +23,30 @@ st.markdown("""
 
 /* ── Root Variables ── */
 :root {
-    --navy:    #0D1B2A;
-    --blue:    #1A3A5C;
-    --teal:    #00C2CB;
-    --gold:    #E8B84B;
-    --white:   #F4F6F9;
-    --card:    #112033;
-    --muted:   #607080;
-    --green:   #10B981;
-    --red:     #EF4444;
-    --orange:  #F59E0B;
-    --border:  rgba(0,194,203,0.18);
+    --bg:       #F7F8FA;
+    --surface:  #FFFFFF;
+    --surface2: #EEF1F5;
+    --navy:     #0F2744;
+    --teal:     #0891B2;
+    --teal-lt:  #E0F2FE;
+    --gold:     #B45309;
+    --gold-lt:  #FEF3C7;
+    --body:     #1E293B;
+    --muted:    #64748B;
+    --border:   #D1D9E0;
+    --green:    #059669;
+    --green-lt: #D1FAE5;
+    --red:      #DC2626;
+    --red-lt:   #FEE2E2;
+    --orange:   #D97706;
+    --orange-lt:#FEF3C7;
 }
 
 /* ── Global Reset ── */
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif !important;
-    background-color: var(--navy) !important;
-    color: var(--white) !important;
+    background-color: var(--bg) !important;
+    color: var(--body) !important;
 }
 
 /* ── Hide Streamlit Branding ── */
@@ -51,39 +57,40 @@ html, body, [class*="css"] {
 .main .block-container {
     padding: 1.5rem 2rem 3rem !important;
     max-width: 1200px !important;
+    background: var(--bg) !important;
 }
 
 /* ── HERO HEADER ── */
 .hero-wrapper {
     position: relative;
-    background: linear-gradient(135deg, #0D1B2A 0%, #1A3A5C 50%, #0D1B2A 100%);
-    border: 1px solid var(--border);
-    border-radius: 16px;
+    background: linear-gradient(135deg, #0F2744 0%, #164E7A 55%, #0F2744 100%);
+    border-radius: 18px;
     padding: 2.5rem 3rem;
     margin-bottom: 2rem;
     overflow: hidden;
+    box-shadow: 0 8px 32px rgba(15,39,68,0.18);
 }
 .hero-wrapper::before {
     content: '';
     position: absolute;
-    top: -60px; right: -60px;
-    width: 220px; height: 220px;
+    top: -70px; right: -50px;
+    width: 240px; height: 240px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,194,203,0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(8,145,178,0.3) 0%, transparent 70%);
 }
 .hero-wrapper::after {
     content: '';
     position: absolute;
-    bottom: -40px; left: 30%;
-    width: 160px; height: 160px;
+    bottom: -50px; left: 25%;
+    width: 180px; height: 180px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(232,184,75,0.10) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(180,83,9,0.2) 0%, transparent 70%);
 }
 .hero-badge {
     display: inline-block;
-    background: rgba(0,194,203,0.12);
-    border: 1px solid rgba(0,194,203,0.35);
-    color: var(--teal);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #7DD3FC;
     font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 3px;
@@ -96,13 +103,13 @@ html, body, [class*="css"] {
     font-family: 'Playfair Display', serif !important;
     font-size: 2.4rem;
     font-weight: 700;
-    color: var(--white);
+    color: #FFFFFF;
     line-height: 1.2;
     margin: 0 0 0.6rem;
 }
-.hero-title span { color: var(--teal); }
+.hero-title span { color: #38BDF8; }
 .hero-sub {
-    color: var(--muted);
+    color: #93C5FD;
     font-size: 0.95rem;
     font-weight: 300;
     max-width: 520px;
@@ -112,111 +119,119 @@ html, body, [class*="css"] {
 .hero-model-badge {
     position: absolute; top: 2rem; right: 2.5rem;
     text-align: center;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
 }
-.hero-model-badge .acc { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--green); line-height: 1; }
-.hero-model-badge .lbl { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 0.2rem; }
-.hero-model-badge .mdl { font-size: 0.75rem; color: var(--teal); font-weight: 500; margin-top: 0.15rem; }
+.hero-model-badge .acc { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: #34D399; line-height: 1; }
+.hero-model-badge .lbl { font-size: 0.7rem; color: #93C5FD; letter-spacing: 2px; text-transform: uppercase; margin-top: 0.2rem; }
+.hero-model-badge .mdl { font-size: 0.75rem; color: #7DD3FC; font-weight: 500; margin-top: 0.15rem; }
 
-/* ── STAT CARDS (KPI Row) ── */
-.kpi-row {
-    display: flex; gap: 1rem; margin-bottom: 2rem;
-}
+/* ── KPI CARDS ── */
+.kpi-row { display: flex; gap: 1rem; margin-bottom: 2rem; }
 .kpi-card {
     flex: 1;
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.1rem 1.3rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(15,39,68,0.06);
 }
 .kpi-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 3px;
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 100%; height: 4px;
 }
-.kpi-card.teal::before { background: var(--teal); }
+.kpi-card.teal::before  { background: var(--teal); }
 .kpi-card.gold::before  { background: var(--gold); }
 .kpi-card.red::before   { background: var(--red); }
 .kpi-card.green::before { background: var(--green); }
-.kpi-val { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--white); line-height: 1.1; }
-.kpi-val.teal-c { color: var(--teal); }
+.kpi-val { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+.kpi-val.teal-c  { color: var(--teal); }
 .kpi-val.gold-c  { color: var(--gold); }
 .kpi-val.red-c   { color: var(--red); }
 .kpi-val.green-c { color: var(--green); }
-.kpi-lbl { font-size: 0.72rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 0.25rem; }
+.kpi-lbl { font-size: 0.72rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 0.3rem; }
 
 /* ── SECTION HEADER ── */
-.section-header {
-    display: flex; align-items: center; gap: 0.7rem;
-    margin-bottom: 1.2rem;
-}
+.section-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.2rem; }
 .section-icon {
-    width: 32px; height: 32px; border-radius: 8px;
+    width: 34px; height: 34px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.95rem; flex-shrink: 0;
+    font-size: 1rem; flex-shrink: 0;
 }
-.section-icon.teal { background: rgba(0,194,203,0.15); }
-.section-icon.gold  { background: rgba(232,184,75,0.15); }
+.section-icon.teal { background: var(--teal-lt); }
+.section-icon.gold { background: var(--gold-lt); }
 .section-header-text h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; font-weight: 600;
-    color: var(--white); margin: 0; line-height: 1;
+    font-size: 1.12rem; font-weight: 700;
+    color: var(--navy); margin: 0; line-height: 1;
 }
 .section-header-text p { font-size: 0.78rem; color: var(--muted); margin: 0.2rem 0 0; }
 
 /* ── FORM CARD ── */
 .form-card {
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 1.6rem 1.8rem;
+    padding: 1.4rem 1.6rem;
     margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(15,39,68,0.05);
 }
+.form-card strong { color: var(--navy) !important; font-size: 0.88rem; }
 
 /* ── Streamlit Input Overrides ── */
 div[data-baseweb="input"] > div,
-div[data-baseweb="select"] > div:first-child,
-div[data-baseweb="textarea"] > div {
-    background: #0D1B2A !important;
-    border: 1px solid rgba(0,194,203,0.25) !important;
+div[data-baseweb="select"] > div:first-child {
+    background: var(--surface) !important;
+    border: 1.5px solid var(--border) !important;
     border-radius: 8px !important;
-    color: var(--white) !important;
-    transition: border-color 0.2s;
+    color: var(--body) !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 div[data-baseweb="input"] > div:focus-within,
 div[data-baseweb="select"] > div:focus-within {
     border-color: var(--teal) !important;
-    box-shadow: 0 0 0 2px rgba(0,194,203,0.12) !important;
+    box-shadow: 0 0 0 3px rgba(8,145,178,0.12) !important;
 }
 input[type="number"], input[type="text"] {
-    color: var(--white) !important;
+    color: var(--body) !important;
     background: transparent !important;
+    font-weight: 500 !important;
 }
-.stSlider > div > div > div { color: var(--teal) !important; }
+/* Dropdown menu options */
+[data-baseweb="popover"] { background: var(--surface) !important; }
+li[role="option"] { color: var(--body) !important; }
+li[role="option"]:hover { background: var(--teal-lt) !important; }
+
+/* ── Slider ── */
 .stSlider > div { padding: 0 !important; }
-[data-testid="stSlider"] div[role="slider"] { background: var(--teal) !important; }
-[data-testid="stSlider"] .st-bg { background: rgba(0,194,203,0.25) !important; }
+[data-testid="stSlider"] div[role="slider"] { background: var(--teal) !important; border-color: var(--teal) !important; }
+[data-testid="stSlider"] .st-bg { background: var(--teal-lt) !important; }
 
 /* ── Number Input ── */
-.stNumberInput div { border-color: rgba(0,194,203,0.25) !important; }
+.stNumberInput div { border-color: var(--border) !important; }
 .stNumberInput div:focus-within { border-color: var(--teal) !important; }
+.stNumberInput input { color: var(--body) !important; font-weight: 500 !important; }
 
 /* ── Labels ── */
-label, .stSelectbox label, .stNumberInput label, .stSlider label {
-    color: #A0BAD4 !important;
+label,
+.stSelectbox label,
+.stNumberInput label,
+.stSlider label {
+    color: var(--navy) !important;
     font-size: 0.8rem !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.5px !important;
-    text-transform: uppercase !important;
-    margin-bottom: 0.3rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
 }
 
 /* ── PREDICT BUTTON ── */
 div[data-testid="stButton"] > button {
     width: 100%;
-    background: linear-gradient(135deg, var(--teal) 0%, #009BA3 100%) !important;
-    color: #0D1B2A !important;
+    background: linear-gradient(135deg, #0891B2 0%, #0E7490 100%) !important;
+    color: #FFFFFF !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 1rem !important;
     font-weight: 700 !important;
@@ -228,35 +243,36 @@ div[data-testid="stButton"] > button {
     cursor: pointer !important;
     transition: all 0.2s !important;
     margin-top: 0.5rem !important;
+    box-shadow: 0 4px 14px rgba(8,145,178,0.3) !important;
 }
 div[data-testid="stButton"] > button:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 24px rgba(0,194,203,0.35) !important;
+    box-shadow: 0 8px 24px rgba(8,145,178,0.4) !important;
+    background: linear-gradient(135deg, #0E7490 0%, #164E63 100%) !important;
 }
-div[data-testid="stButton"] > button:active {
-    transform: translateY(0) !important;
-}
+div[data-testid="stButton"] > button:active { transform: translateY(0) !important; }
 
 /* ── RESULT CARDS ── */
 .result-cancel {
-    background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(239,68,68,0.05) 100%);
-    border: 1px solid rgba(239,68,68,0.4);
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border: 1.5px solid #FECACA;
     border-radius: 16px;
     padding: 2rem;
     text-align: center;
+    box-shadow: 0 4px 16px rgba(220,38,38,0.10);
 }
 .result-safe {
-    background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.05) 100%);
-    border: 1px solid rgba(16,185,129,0.4);
+    background: linear-gradient(135deg, #F0FDF4 0%, #D1FAE5 100%);
+    border: 1.5px solid #A7F3D0;
     border-radius: 16px;
     padding: 2rem;
     text-align: center;
+    box-shadow: 0 4px 16px rgba(5,150,105,0.10);
 }
 .result-emoji { font-size: 2.8rem; margin-bottom: 0.5rem; }
 .result-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.5rem; font-weight: 700;
-    margin: 0.3rem 0;
+    font-size: 1.4rem; font-weight: 700; margin: 0.3rem 0;
 }
 .result-title.danger { color: var(--red); }
 .result-title.safe   { color: var(--green); }
@@ -265,38 +281,37 @@ div[data-testid="stButton"] > button:active {
 /* ── PROBABILITY BAR ── */
 .prob-bar-wrapper { margin: 1rem 0; }
 .prob-bar-track {
-    background: rgba(255,255,255,0.08);
-    border-radius: 6px; height: 8px;
+    background: rgba(15,39,68,0.08);
+    border-radius: 6px; height: 9px;
     overflow: hidden; margin: 0.4rem 0;
 }
-.prob-bar-fill-red   { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #F59E0B, #EF4444); }
-.prob-bar-fill-green { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #34D399, #10B981); }
+.prob-bar-fill-red   { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #FBBF24, #DC2626); }
+.prob-bar-fill-green { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #34D399, #059669); }
 .prob-bar-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); }
 
 /* ── RECOMMENDATION CARD ── */
 .rec-card {
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem 1.2rem;
     margin-top: 0.8rem;
-    border-left: 3px solid;
+    border-left: 4px solid;
+    box-shadow: 0 2px 6px rgba(15,39,68,0.05);
 }
-.rec-card.warn { border-left-color: var(--orange); }
-.rec-card.ok   { border-left-color: var(--green); }
-.rec-card h4   { font-size: 0.85rem; font-weight: 600; margin: 0 0 0.3rem; }
-.rec-card p    { font-size: 0.8rem; color: var(--muted); margin: 0; line-height: 1.5; }
+.rec-card.warn { border-left-color: var(--orange); background: #FFFBEB; }
+.rec-card.ok   { border-left-color: var(--green);  background: #F0FDF4; }
+.rec-card h4   { font-size: 0.85rem; font-weight: 700; margin: 0 0 0.3rem; color: var(--navy); }
+.rec-card.warn h4 { color: #92400E; }
+.rec-card.ok h4   { color: #065F46; }
+.rec-card p    { font-size: 0.8rem; color: #475569; margin: 0; line-height: 1.55; }
 
 /* ── RISK METER ── */
-.risk-meter {
-    margin: 1rem 0;
-}
-.risk-track {
-    display: flex; gap: 3px; margin: 0.5rem 0;
-}
+.risk-meter { margin: 1rem 0; }
+.risk-track { display: flex; gap: 4px; margin: 0.5rem 0; }
 .risk-seg {
     flex: 1; height: 10px; border-radius: 3px;
-    background: rgba(255,255,255,0.08);
+    background: #E2E8F0;
     transition: background 0.4s;
 }
 .risk-seg.active-red    { background: var(--red); }
@@ -307,12 +322,12 @@ div[data-testid="stButton"] > button:active {
 /* ── FEATURE IMPORTANCE MINI ── */
 .feat-row {
     display: flex; align-items: center; gap: 0.7rem;
-    padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 0.5rem 0; border-bottom: 1px solid #EEF1F5;
 }
-.feat-name { font-size: 0.8rem; color: #A0BAD4; width: 150px; flex-shrink: 0; }
-.feat-bar-wrap { flex: 1; background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; }
+.feat-name { font-size: 0.8rem; color: #334155; width: 160px; flex-shrink: 0; font-weight: 500; }
+.feat-bar-wrap { flex: 1; background: #E2E8F0; border-radius: 4px; height: 7px; }
 .feat-bar { height: 100%; border-radius: 4px; }
-.feat-pct { font-size: 0.78rem; color: var(--white); font-weight: 600; width: 35px; text-align: right; }
+.feat-pct { font-size: 0.78rem; color: var(--navy); font-weight: 700; width: 35px; text-align: right; }
 
 /* ── FOOTER ── */
 .footer {
@@ -322,26 +337,37 @@ div[data-testid="stButton"] > button:active {
     margin-top: 2rem;
 }
 .footer p { font-size: 0.75rem; color: var(--muted); margin: 0.2rem 0; }
-.footer a { color: var(--teal); text-decoration: none; }
+.footer a { color: var(--teal); text-decoration: none; font-weight: 600; }
 
 /* ── TOOLTIP HINT ── */
 .hint {
     display: inline-block;
-    background: rgba(0,194,203,0.08);
-    border: 1px solid rgba(0,194,203,0.2);
+    background: var(--teal-lt);
+    border: 1px solid rgba(8,145,178,0.25);
     border-radius: 6px;
     padding: 0.4rem 0.7rem;
     font-size: 0.75rem;
-    color: var(--teal);
+    color: #0E7490;
+    font-weight: 500;
     margin-top: 0.4rem;
 }
 
 /* ── DIVIDER ── */
 .gold-divider {
     height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background: linear-gradient(90deg, transparent, #D97706, transparent);
     margin: 1.5rem 0;
     border: none;
+    opacity: 0.4;
+}
+
+/* ── Result panel background ── */
+.result-panel-bg {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    box-shadow: 0 2px 8px rgba(15,39,68,0.05);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -635,7 +661,7 @@ with col_result:
 
         st.markdown(f"""
         <div class="risk-meter">
-            <div style="font-size:0.78rem; color:#A0BAD4; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:1px;">Risk Meter</div>
+            <div style="font-size:0.78rem; color:#64748B; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:1px; font-weight:600;">Risk Meter</div>
             <div class="risk-track">{segs_html}</div>
             <div class="risk-labels"><span>Sangat Rendah</span><span>Sedang</span><span>Sangat Tinggi</span></div>
         </div>
@@ -646,7 +672,7 @@ with col_result:
 
         # ── Feature Importance Mini ──
         st.markdown("""
-        <div style="font-size:0.78rem; color:#A0BAD4; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.7rem;">
+        <div style="font-size:0.78rem; color:#64748B; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.7rem; font-weight:600;">
         🔍 Faktor Paling Berpengaruh (Model)
         </div>
         """, unsafe_allow_html=True)
@@ -678,7 +704,7 @@ with col_result:
 
         # ── Recommendations ──
         st.markdown("""
-        <div style="font-size:0.78rem; color:#A0BAD4; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.7rem;">
+        <div style="font-size:0.78rem; color:#64748B; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.7rem; font-weight:600;">
         💼 Rekomendasi Tindakan Bisnis
         </div>
         """, unsafe_allow_html=True)
@@ -722,24 +748,23 @@ with col_result:
         # ── Placeholder before prediction ──
         st.markdown("""
         <div style="
-            background: var(--card);
-            border: 1px dashed rgba(0,194,203,0.25);
+            background: #FFFFFF;
+            border: 2px dashed #CBD5E1;
             border-radius: 14px;
             padding: 3rem 2rem;
             text-align: center;
-            color: var(--muted);
         ">
             <div style="font-size:3rem; margin-bottom:1rem;">🏨</div>
-            <div style="font-family:'Playfair Display',serif; font-size:1.2rem; color:#A0BAD4; margin-bottom:0.5rem;">
+            <div style="font-family:'Playfair Display',serif; font-size:1.2rem; color:#0F2744; font-weight:700; margin-bottom:0.5rem;">
                 Prediksi Belum Dijalankan
             </div>
-            <p style="font-size:0.85rem; max-width:280px; margin:0 auto; line-height:1.6;">
-                Isi detail reservasi di sebelah kiri, lalu klik tombol <strong style="color:var(--teal)">Prediksi Risiko Pembatalan</strong> untuk melihat hasil analisis.
+            <p style="font-size:0.85rem; max-width:280px; margin:0 auto; line-height:1.6; color:#64748B;">
+                Isi detail reservasi di sebelah kiri, lalu klik tombol <strong style="color:#0891B2;">Prediksi Risiko Pembatalan</strong> untuk melihat hasil analisis.
             </p>
         </div>
 
         <div style="margin-top:1.5rem;">
-            <div style="font-size:0.78rem; color:#A0BAD4; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.8rem;">📌 Panduan Pengisian</div>
+            <div style="font-size:0.78rem; color:#64748B; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.8rem; font-weight:600;">📌 Panduan Pengisian</div>
         </div>
         """, unsafe_allow_html=True)
 
